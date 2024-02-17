@@ -7,7 +7,7 @@ const path = require("path")
 
 const app = express()
 app.use(express.json())
-app.use(path.join(__dirname, "dist"))
+app.use(express.static(path.join(__dirname, "dist")))
 app.use(cors({
     origin: "http://localhost:5173"
 }))
