@@ -2,14 +2,13 @@ const asyncHandler = require("express-async-handler")
 const validator = require("validator")
 const fs = require("fs/promises")
 const path = require("path")
-const project = require("../model/project")
 const upload = require("../utils/upload")
-
+const Project = require("../model/Project")
 
 
 exports.getAllProject = asyncHandler(async (req, res) => {
 
-    const result = await project.find()
+    const result = await Project.find()
 
     res.json({ message: "Project Fetch Success", result })
 })
@@ -24,9 +23,9 @@ exports.addProject = asyncHandler(async (req, res) => {
         }
 
         if (req.file) {
-            await project.create({ ...req.body, hero: req.file.filename });
+            await Project.create({ ...req.body, hero: req.file.filename });
         } else {
-            await project.create(req.body);
+            await Project.create(req.body);
         }
 
         res.status(201).json({ message: "Project Add Successfully" });
@@ -56,15 +55,15 @@ exports.updateProject = asyncHandler(async (req, res) => {
         }
 
         const { id } = req.params
-        const result = await project.findById(id)
+        const result = await Project.findById(id)
 
         if (req.file) {
             //Delete Previous image and upload new image
             await fs.unlink(path.join(__dirname, "..", "projectimg", result.hero)) //Delete
             //upload
-            await project.findByIdAndUpdate(id, { ...req.body, hero: req.file.filename })
+            await Project.findByIdAndUpdate(id, { ...req.body, hero: req.file.filename })
         } else {
-            await project.findByIdAndUpdate(id, req.body)
+            await Project.findByIdAndUpdate(id, req.body)
         }
 
         res.status(200).json({ message: "Project Update Success" })
