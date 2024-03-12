@@ -36,11 +36,11 @@ exports.addProject = asyncHandler(async (req, res) => {
 exports.deleteProject = asyncHandler(async (req, res) => {
     const { id } = req.params
 
-    const result = await project.findById(id)
+    const result = await Project.findById(id)
 
     await fs.unlink(path.join(__dirname, "..", "projectimg", result.hero))
 
-    await project.findByIdAndDelete(id)
+    await Project.findByIdAndDelete(id)
 
     res.status(200).json({ message: "Project Delete Success" })
 })
