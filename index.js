@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(express.static("projectimg"))
 app.use(express.static(path.join(__dirname, "dist")))
 app.use(cors({
-    origin: "http://localhost:5173"
+    origin: "https://ashish-portfolio-1.onrender.com"
 }))
 app.use("/api/user", require("./router/emailRouters"))
 app.use("/api/project", require("./router/projectRoute"))
