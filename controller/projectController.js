@@ -35,7 +35,7 @@ exports.addProject = asyncHandler(async (req, res) => {
         // }
 
         res.status(201).json({ message: "Project Add Successfully" });
-    });
+    })
 });
 
 
