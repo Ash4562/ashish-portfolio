@@ -9,9 +9,7 @@ const storage = multer.diskStorage({
         const fileName = uuid() + path.extname(file.originalname)
         cb(null, fileName)
     },
-    destination: (req, file, cb) => {
-        cb(null, "projectimg")
-    }
+
 })
 
 

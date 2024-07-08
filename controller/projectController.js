@@ -4,8 +4,12 @@ const fs = require("fs/promises")
 const path = require("path")
 const upload = require("../utils/upload")
 const Project = require("../model/Project")
-
-
+const cloudinary = require('cloudinary').v2
+cloudinary.config({
+    cloud_name: process.env.CLOUNDNARY_CLOUD_NAME,
+    api_key: process.env.CLOUNDNARY_CLOUD_KEY,
+    api_secret: process.env.CLOUNDNARY_CLOUD_SECRET,
+})
 exports.getAllProject = asyncHandler(async (req, res) => {
 
     const result = await Project.find()
@@ -21,12 +25,14 @@ exports.addProject = asyncHandler(async (req, res) => {
         if (err) {
             return res.status(400).json({ message: err.message || "Unable to upload" });
         }
-
-        if (req.file) {
-            await Project.create({ ...req.body, hero: req.file.filename });
-        } else {
-            await Project.create(req.body);
-        }
+        const { secure_url } = await cloudinary.uploader.upload(req.file.path)
+        const result = await Project.create({ ...req.body, hero: secure_url })
+        res.json({ messagea: "Product project success", result })
+        // if (req.file) {
+        //     await Project.create({ ...req.body, hero: req.file.filename });
+        // } else {
+        //     await Project.create(req.body);
+        // }
 
         res.status(201).json({ message: "Project Add Successfully" });
     });
