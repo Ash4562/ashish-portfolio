@@ -24,25 +24,34 @@ exports.addProject = asyncHandler(async (req, res) => {
         if (err) {
             return res.status(400).json({ message: err.message || "Unable to upload" });
         }
+        console.log(req.file);
+        const { secure_url } = await cloudinary.uploader.upload(req.file.path);
+        const result = await Project.create({ ...req.body, hero: secure_url });
+        res.status(201).json({ message: "Project added successfully", result });
 
-        try {
-            const { secure_url } = await cloudinary.uploader.upload(req.file.path);
-            const result = await Project.create({ ...req.body, hero: secure_url });
-            res.status(201).json({ message: "Project added successfully", result });
-        } catch (error) {
-            res.status(500).json({ message: error.message || "Internal Server Error" });
-        }
     });
 });
 
 
+// exports.adminDeleteProduct = asyncHandler(async (req, res) => {
+//     const { deleteId } = req.params
+//     const result = await Product.findById(deleteId)
+//     const str = result.images.split("/")
+//     const img = str[str.length - 1].split(".")[0]
+//     await cloudinary.uploader.destroy(img)
+//     await Product.findByIdAndDelete(deleteId)
+//     res.json({ message: "Product Delete Success" })
+// })
 
 exports.deleteProject = asyncHandler(async (req, res) => {
     const { id } = req.params
 
     const result = await Project.findById(id)
+    const str = result.hero.split("/")
+    const img = str[str.length - 1].split(".")[0]
+    await cloudinary.uploader.destroy(img)
 
-    await fs.unlink(path.join(__dirname, "..", "projectimg", result.hero))
+    // await fs.unlink(path.join(__dirname, "..", "projectimg", result.hero))
 
     await Project.findByIdAndDelete(id)
 
