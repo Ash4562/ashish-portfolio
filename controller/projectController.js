@@ -20,23 +20,21 @@ exports.getAllProject = asyncHandler(async (req, res) => {
 
 
 exports.addProject = asyncHandler(async (req, res) => {
-
     upload(req, res, async (err) => {
         if (err) {
             return res.status(400).json({ message: err.message || "Unable to upload" });
         }
-        const { secure_url } = await cloudinary.uploader.upload(req.file.path)
-        const result = await Project.create({ ...req.body, hero: secure_url })
-        res.json({ messagea: "Product project success", result })
-        // if (req.file) {
-        //     await Project.create({ ...req.body, hero: req.file.filename });
-        // } else {
-        //     await Project.create(req.body);
-        // }
 
-        res.status(201).json({ message: "Project Add Successfully" });
-    })
+        try {
+            const { secure_url } = await cloudinary.uploader.upload(req.file.path);
+            const result = await Project.create({ ...req.body, hero: secure_url });
+            res.status(201).json({ message: "Project added successfully", result });
+        } catch (error) {
+            res.status(500).json({ message: error.message || "Internal Server Error" });
+        }
+    });
 });
+
 
 
 exports.deleteProject = asyncHandler(async (req, res) => {
